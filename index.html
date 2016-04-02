@@ -81,6 +81,29 @@
 <li>Ray re-ordering within a packet when unreasonable amount of divergence is detected.</li>
 </ul>
 
+<h3>
+<a id="platform-choice" class="anchor" href="#platform-choice" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>PLATFORM CHOICE</h3>
+
+<p>I’ll be using the new Gates machines to test  AVX (8 wide vectors) and SSE4 (4 wide vectors) vector instructions and the Xeon Phi on the latedays cluster to test IMCI (16 wide vectors). Since each individual core on the Xeon Phi is comparatively slower than the Intel Core i7’s in the new gates machines, I expect to observe a drop-off in performance for the BVH build part of the algorithm. </p>
+
+<h3>
+<a id="schedule" class="anchor" href="#schedule" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>SCHEDULE</h3>
+
+<ul>
+<li>
+<strong>Week of April 3</strong>: Familiarize myself with both papers, and Intel’s SIMD intrinsics documentation more thoroughly. Refresh memory of ray-tracing algorithm from 15-462. Find better better parallelizable method of creating SAH-based BVHs.</li>
+<li>
+<strong>Week of April 4</strong> : Implement Packet Based Ray tracing and produce comparison graphs.</li>
+<li>
+<strong>Week of April 11</strong> : Parallelize BVH construction </li>
+<li>
+<strong>Week of April 18</strong> : This is the week of my RAS nationals so take a break and study for the midterm.</li>
+<li>
+<strong>Week of April 25</strong> : Identify problems and performance bottlenecks and work towards eliminating them.</li>
+<li>
+<strong>Week of May 1</strong> : Wrap up, stretch goals and final report.</li>
+</ul>
+
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/riyasavla/15418-project-website">15-418 Final Project</a> is maintained by <a href="https://github.com/riyasavla">riyasavla</a>.</span>
 
