@@ -123,6 +123,30 @@
 </tbody>
 </table>
 
+<h2>
+<a id="checkpoint-report" class="anchor" href="#checkpoint-report" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>CHECKPOINT REPORT</h2>
+
+<h3>
+<a id="updated-schedule-" class="anchor" href="#updated-schedule-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Updated Schedule :</h3>
+
+<p>Wed 20 - Sun 24 Finish Packetization and ISPC related stuff. Add in frustum culling and ordered traversal and produce comparison graphs between reference and AVX and SSE and different number of threads. Also create packets from rays corresponding to multiple pixels.</p>
+
+<p>Mon 25 - Exam 2</p>
+
+<p>Tue 26 - Fri 29 Explore Cilk+ for simple horizontal ||ism for BVH construction.
+Sat 30 - Tue 3 Combine vertical and horizontal ||ism and produce comparison graphs for thresholds switching. 
+Wed 4 - Mon 9 Wrap-up, stretch goals and Final Report </p>
+
+<h3>
+<a id="work-done-so-far-and-relation-to-original-proposed-schedule" class="anchor" href="#work-done-so-far-and-relation-to-original-proposed-schedule" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Work done so far and relation to original proposed schedule</h3>
+
+<p>I converted existing code to use a structure of arrays storage method as opposed to an array of structures of better suit use of SIMD. I changed the ray tracer to generate and use packets, employing most of the optimizations (except ordered traversal and  early exit by frustum rejection-&gt; ongoing at the time of writing this.) I am also currently debugging the correctness of the ISPC code. I am about half a week behind schedule but I plan to catch by the end of next week. </p>
+
+<h3>
+<a id="most-concerning-issues-" class="anchor" href="#most-concerning-issues-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Most concerning issues :</h3>
+
+<p>Time required to familiarize myself with Cilk may be more than I imagined. Tuning stuff also requires a lot of time. Working with existing code-base provides a boost at the start but also imposes restrictions I hadn’t considered previously. </p>
+
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/riyasavla/15418-project-website">15-418 Final Project</a> is maintained by <a href="https://github.com/riyasavla">riyasavla</a>.</span>
 
