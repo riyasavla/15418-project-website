@@ -277,6 +277,37 @@ a:hover {
     margin:auto;
 }
 
+@media screen and (max-width: 1024px) {
+    #stuff{
+        bottom: 3%;
+        text-align: center;
+        width:100%;
+    }
+    #bottom_navbar_stuff{
+        float: right;
+        position:relative;
+        left:-50%;
+        text-align:left;
+    }
+    #home ul{
+        margin-top:6%;
+        position: relative;
+        left:50%;
+    }
+}
+
+@media screen and (max-width: 615px) {
+    #home li{
+        width:100%;
+        text-align: center;
+        margin-top: 10px;
+    }
+    #home ul{
+        margin-top:3%;
+    }
+}
+
+
 @media screen and (min-width: 64em) {
   .main-content {
     max-width: 64rem;
