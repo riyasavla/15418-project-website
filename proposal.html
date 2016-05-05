@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>15-418 Final Project by riyasavla</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <a href="index.html"><h1 class="project-name">Packet Based Ray Tracer</h1> </a> 
+      <h2 class="project-tagline">15-418 Final Project</h2>
+      <a href="#" class="btn active">Proposal</a>
+        <a href="checkpoint.html" class="btn">Checkpoint</a>
+        <a href="final.html" class="btn">Final Report</a>
+    </section>
+
+    <section class="main-content">
+        
+        <h2 style="text-align:center">
+<a id="checkpoint-report" class="anchor" href="index.html#checkpoint-report" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Project Proposal</h2>
+        
+      <h3>
+<a id="summary" class="anchor" href="index.html#summary" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>SUMMARY</h3>
+
+<p>I will implement a ray tracing algorithm that uses packet-based traversal techniques and relies of high quality SAH-based bounding volume hierarchies.</p>
+
+<h3>
+<a id="background" class="anchor" href="index.html#background" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>BACKGROUND</h3>
+
+<p>Ray Tracing is a technique for generating an image by tracing the path of light through pixels in an image plane and simulating the effects of its encounters with virtual objects. Ray tracing is capable of simulating a wide variety of optical effects, such as reflection and refraction, but at a higher computational cost than other algorithms like rasterization.</p>
+
+<p>Individual light rays are shot from the viewer (the eye, or the pixel ) into the scene. When a ray hits a surface, it can suffer up to three phenomena: reflection (the ray direction is changed so that it returns to the medium from which it originated, for example, for mirrors), refraction (the ray ‘bends’ due to a change in the medium it is traversing ) and or shadow. To further avoid tracing all rays in a scene, a shadow ray is used to test if a surface is visible to a light (trace a direct line to each light source and test intersection with opaque objects in the scene). In case it is, the light contributes to the object’s color and the reflected/refracted ray is recursively traced through the scene, otherwise the object is in shadow for that light source. </p>
+
+<p>Since ray tracing follows the laws of physics, very photo-realistic images can be produced with it and there is increasing interest towards making the algorithm and the building of data structures it uses fast enough to be in interactive and real-time applications.  </p>
+
+<h3>
+<a id="the-challenge" class="anchor" href="index.html#the-challenge" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>THE CHALLENGE</h3>
+
+<h3>
+<a id="packet-based-traversal" class="anchor" href="index.html#packet-based-traversal" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packet Based Traversal</h3>
+
+<ul>
+<li>Correctly modifying my existing ray-tracing code to use SIMD intrinsics for packet-based traversal. Debating about whether to use ISPC or directly using Intel’s provided instructions. </li>
+<li>Choosing a method to bunch rays together to create packets in a way that maximizes packet utilization.</li>
+<li>Divergence caused by different rays within a packet interacting with the scene in different ways could severely affect performance. Ray re-ordering within a packet could potentially help.</li>
+</ul>
+
+<h3>
+<a id="fast-bvh-build" class="anchor" href="index.html#fast-bvh-build" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fast BVH Build</h3>
+
+<ul>
+<li>Working with the different amounts of parallelism available in different stages of the BVH build</li>
+<li>Tuning threshold to switch between horizontal (across triangles) and vertical (left and right child) work sharing</li>
+</ul>
+
+<h3>
+<a id="resources" class="anchor" href="index.html#resources" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>RESOURCES</h3>
+
+<p>My starting point will be the ray tracer I implemented in 15-462 (Fall 2015). I’ll be following suggestions for parallelizing an SAH-BVH build given in Wald’s <a href="http://www.sci.utah.edu/%7Ewald/Publications/2007/ParallelBVHBuild/fastbuild.pdf">On fast Construction of SAH-based Bounding Volume Hierarchies</a> and <a href="http://www.cs.cmu.edu/afs/cs.cmu.edu/academic/class/15869-f11/www/readings/wald07_packetbvh.pdf">Ray Tracing Deformable Scenes Using Dynamic Bounding Volume Hierarchies</a> for packet-based ray traversal.</p>
+
+<h3>
+<a id="goals-and-deliverables" class="anchor" href="index.html#goals-and-deliverables" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>GOALS AND DELIVERABLES</h3>
+
+<h3>
+<a id="packet-based-traversal-1" class="anchor" href="index.html#packet-based-traversal-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packet Based Traversal</h3>
+
+<ul>
+<li>Compare the performance of different packet sizes.</li>
+<li>Compare the performance of different vector-widths (AVX, SSE, IMCI on the Phi).</li>
+</ul>
+
+<h3>
+<a id="fast-bvh-build-1" class="anchor" href="index.html#fast-bvh-build-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fast BVH Build</h3>
+
+<ul>
+<li>Compare amount of time required to construct the BVH for different types of scenes.</li>
+<li>Compare speedup achieved with different number of cores.</li>
+</ul>
+
+<h3>
+<a id="stretch-goals" class="anchor" href="index.html#stretch-goals" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Stretch Goals</h3>
+
+<ul>
+<li>Ray re-ordering within a packet when unreasonable amount of divergence is detected.</li>
+</ul>
+
+<h3>
+<a id="platform-choice" class="anchor" href="index.html#platform-choice" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>PLATFORM CHOICE</h3>
+
+<p>I’ll be using the new Gates machines to test  AVX (8 wide vectors) and SSE4 (4 wide vectors) vector instructions and the Xeon Phi on the latedays cluster to test IMCI (16 wide vectors). Since each individual core on the Xeon Phi is comparatively slower than the Intel Core i7’s in the new gates machines, I expect to observe a drop-off in performance for the BVH build part of the algorithm. </p>
+
+<h3>
+<a id="schedule" class="anchor" href="index.html#schedule" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>SCHEDULE</h3>
+
+<table>
+<thead>
+<tr>
+<th align="right">Week Of</th>
+<th>Things to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right" width="15%">April 4</td>
+<td>Familiarize myself with both papers, and Intel’s SIMD intrinsics documentation more thoroughly. Refresh memory of ray-tracing algorithm from 15-462. Find better better parallelizable method of creating SAH-based BVHs.</td>
+</tr>
+<tr>
+<td align="right">April 11</td>
+<td>Implement Packet Based Ray tracing and produce comparison graphs.</td>
+</tr>
+<tr>
+<td align="right">April 18</td>
+<td>This is the week of my RAS nationals so take a break and study for the midterm.</td>
+</tr>
+<tr>
+<td align="right">April 25</td>
+<td>Parallelize BVH construction.</td>
+</tr>
+<tr>
+<td align="right">May 1</td>
+<td>Wrap up, stretch goals and final report.</td>
+</tr>
+</tbody>
+</table>
+
+
+<footer class="site-footer">
+<span class="site-footer-owner"><a href="https://github.com/riyasavla/15418-project-website">15-418 Final Project</a> is maintained by <a href="https://github.com/riyasavla">riyasavla</a>.</span>
+
+<span class="site-footer-credits">This page was modified from the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+</footer>
+
+</section>
+
+  
+  </body>
+</html>
