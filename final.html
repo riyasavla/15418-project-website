@@ -116,7 +116,7 @@
         
         <p>There is a clear advantage to increasing packet size for highly coherent scenes where rays in a packet have similar behaviour with respect to many primitves. On the other hand, AVX provides almost no advantage over SSE-4, possibly due to higher possibility of divergence within a vector-width number of adjacent rays in a packet.</p>
         
-        <p> This observation leads to one conclusion. Packetizing camera and shadow rays makes sense because they have a much higher chance of being coherent with respect to one another. However, for diffuse bounces, rays are essentially in random directions and hence, indirect lighting computation does not benefit from packetization. In fact, I observed a performance drop when using packets for diffuse bounces compared to single ray code.</p>
+        <p> This observation leads to the conclusion that packetizing camera and shadow rays makes sense because they have a much higher chance of being coherent with respect to one another. However, for diffuse bounces, rays are essentially in random directions and hence, indirect lighting computation does not benefit from packetization. In fact, I observed a performance drop when using packets for diffuse bounces compared to single ray code.</p>
 
        <h3>
         <a id="background" class="anchor" href="index.html#background" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>REFERENCES</h3>  
