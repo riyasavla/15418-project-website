@@ -83,15 +83,48 @@
          <center><img src="packet.png" style="width:50%;"></center>
         
         <p>However, there are costs associated with using packets as well. Divergence amongst BVH traversal and primitive intersections amongst individual rays in the packet leads to a performance drop for obvious reasons. For example, one ray can drag down an entire packet along with it into a node even if all other rays do not intersect with it. For this reason, it is important for rays belonging to one packet to be as coherent as possible. Then, the maximum benefits of packets are seen. As expected, packet-based traversal performs poorly on over-detailed scenes as primitives are too small for majority rays in a packet to intersect the same ones. </p>
-        <p>One thing to note is that each ray can be traced completely independently of another and thus ray-tracing is an inherently parallel algorithm. The starter code I used already exploits this fact by including the functionality to have multiple threads working on different ‘tiles’ of an image concurrently. I compare the performance of my packet-based ISPC version of a ray tracer to single ray based one at different thread counts, later, in the results section. </p>
+        <p>One thing to note is that each ray can be traced completely independently of another and thus ray-tracing is an inherently parallel algorithm. The starter code I used (Fall 2015 15-462's assignment 3) already exploits this fact by including the functionality to have multiple threads working on different ‘tiles’ of an image concurrently. I compare the performance of my packet-based ISPC version of a ray tracer to single ray based one at different thread counts, later, in the results section. </p>
         
-      
-  
+                        <h3>
+<a id="background" class="anchor" href="index.html#background" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>RESULTS</h3>  
+        
+                        <h3>
+<a id="background" class="anchor" href="index.html#background" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Parallel BVH Build</h3>  
+        
+       <p> Speedup compared to Single Threaded Build <br>
+           Scene Size : ~1M Primitives </p>
+            
+        
+                <center><img src="bvhspeedup.png" style="width:75%;"></center>
+        
+<p>>Maximum reached at 6 threads, which the the number of
+    physical cores on the machine the program was run on.</p>
+        
+        <h3>
+<a id="background" class="anchor" href="index.html#background" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packet Traversal</h3>  
+        
+             <center><img src="mediumscenespeedup.jpg" style="width:75%;"></center>
+        
+        <p>This is the speedup achieved compared to the performance of single ray code running with one thread for a medium sized scene that fits in the L2 cache of the machine. Below is the rendered image. </p>
+        
+                <center><img src="banana.jpg" style="width:60%;"></center>
+        <br>
+        
+        <p>Effect of Packet Size and Vector Width on Performance. </p>
+        
+                <center><img src="avx.png" style="width:75%;"></center>
+        
+        <p>There is a clear advantage to increasing packet size for highly coherent scenes where rays in a packet have similar behaviour with respect to many primitves. On the other hand, AVX provides almost no advantage over SSE-4, possibly due to higher possibility of divergence within a vector-width number of adjacent rays in a packet.</p>
+        
+        <p> This observation leads to one conclusion. Packetizing camera and shadow rays makes sense because they have a much higher chance of being coherent with respect to one another. However, for diffuse bounces, rays are essentially in random directions and hence, indirect lighting computation does not benefit from packetization. In fact, I observed a performance drop when using packets for diffuse bounces compared to single ray code.</p>
+
+       <h3>
+        <a id="background" class="anchor" href="index.html#background" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>REFERENCES</h3>  
+
+        <p>My starting point was the ray tracer I implemented in 15-462 (Fall 2015). I followed suggestions for parallelizing an SAH-BVH build given in Wald’s ‘On fast Construction of SAH-based Bounding Volume Hierarchies’ and ‘Ray Tracing Deformable Scenes Using Dynamic Bounding Volume Hierarchies’ for packet-based ray traversal.</p>
     
         
-        <center><img src="banana.jpg" style="width:48%; float:left;"> <img src="banana.jpg" style="width:48%; margin-left:4%;"></center>
-        
-        <center><img src="banana.jpg" style="width:48%;"></center>
+
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/riyasavla/15418-project-website">15-418 Final Project</a> is maintained by <a href="https://github.com/riyasavla">riyasavla</a>.</span>
