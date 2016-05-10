@@ -24,10 +24,69 @@
 <a id="checkpoint-report" class="anchor" href="index.html#checkpoint-report" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Final Report</h2>
         
       <h3>
-<a id="summary" class="anchor" href="index.html#summary" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Under Contruction.</h3>
+<a id="summary" class="anchor" href="index.html#summary" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>SUMMARY</h3>
+
+<p>I implemented a ray tracing algorithm that uses packet-based traversal techniques and relies of high quality SAH-based bounding volume hierarchies. I also implemented a simple parallel build algorithm for said bounding volume hierarchies.</p>
+
+        <h3>
+<a id="background" class="anchor" href="index.html#background" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>BACKGROUND</h3>
+        
+        <h3>
+<a id="background" class="anchor" href="index.html#background" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What is Ray Tracing ?</h3>
+        
+        <p>Ray Tracing is a technique for generating an image by tracing the path of light through pixels in an image plane and simulating the effects of its encounters with virtual objects. Ray tracing is capable of simulating a wide variety of optical effects, such as reflection and refraction, but at a higher computational cost than other algorithms like rasterization.</p>
+
+        <p>Individual light rays are shot from the viewer (the eye, or the pixel ) into the scene. When a ray hits a surface, a shadow ray is shot from the intersection to test if a surface is visible to a light. If it is, the light contributes to the object’s color, otherwise not.</p>
+        <center><img src="ray_trace.png" style="width:48%;"></center>
+        
+        <p>Since ray tracing follows the laws of physics, very photo-realistic images can be produced with it and there is increasing interest towards making the algorithm and the building of data structures it uses fast enough to be in interactive and real-time applications.</p>
+        
+        
+        <h3>
+<a id="background" class="anchor" href="index.html#background" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Bounding Volume Hierarchies</h3>  
+        
+        <p>Bounding Volume Hierarchies are tree structures used to organize primitives (primitives can be any polygons or spheres, most common are triangles) in a scene. The main objective in using a BVH to organize a scene is to minimize cost of finding closest intersection of ray with a primitive in the scene.  Each primitive is enclosed in a an axis aligned bounding box. Interior nodes store subset of primitives and aggregate bounding volumes for all primitives in subtree whereas leaf nodes store a list of primitives.</p>
+
+        <p>The root node contains all the primitives and is recursively split into sub trees with a spatial partition chosen to minimize cost, where the cost of each spatial split is the sum of the surface area of the aggregate sub-tree bounding volume of each weighed by the  number of primitives it contains respectively.</p>
+        
+
+                <center><img src="bvh.png" style="width:100%;"></center>
+        <br> 
+        
+        
+                <h3>
+<a id="background" class="anchor" href="index.html#background" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>APPROACH</h3>  
+        
+                        <h3>
+<a id="background" class="anchor" href="index.html#background" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Building a BVH in Parallel</h3>  
+        
+        <p>Since building the BVH is essentially and divide and conquer problem, and each sub-tree is completely independent of others, different threads can work on splitting different sub-trees without any need for synchronization. There is also a significant performance gained by using a iterative stack-based method of building BVH as opposed to recursive calls. However, as illustrated in the diagram below, there is a significant bottleneck in the top levels of the tree. Available threads do not have enough sub-trees to work on.</p>
+                        <center><img src="bvhnodelevel.jpg" style="width:75%;"></center>
+    
+
+        <p>One solution is to have all the threads work on one node by splitting the primitives amongst the threads as shown in the figure below. Each thread works on computing partial cost of splitting node by each partition plane. Once all the threads have finished this sep, one thread combines costs computed by all threads and finds the minimum cost partition.This does require a barrier but the next step is sequential, but it is small and fast.</p>
+                                <center><img src="bvhhoriz.jpg" style="width:50%;"></center>
+     
+        
+        <p>This approach works well in the higher levels of the tree when the number of primitives is far greater than number of threads available.  Once enough sub-trees are available, I switch to node-level parallelism.</p>
+        
+        
+         <h3>
+<a id="background" class="anchor" href="index.html#background" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packet Based Traversal</h3>  
+        
+        
+        <p>A ray’s point of intersection with the scene is found by descending nodes of the BVH and discarding all primitives contained in a sub-tree if the ray does not intersect with the bounding box of the node itself. The basic idea in a packet-based traversal method is to traverse the BVH one ‘packet’ at a time, rather than one ‘ray’ at a time. Each packet keeps track of its first active ray. If the first active ray intersects with a node, the entire packet immediately descends into the node. If not, then I find the next active ray in the packet, marking previous ones inactive. </p>
+        
+        <p>When a packet reaches a leaf, each ray in the packet must be intersected with the primitives in the leaf. I use SIMD instructions to perform this in parallel via Intel’s ISPC. For this, I store a packet of rays as a structure of arrays to be more compatible with SIMD loads and stores. Packet size is a multiple of the vector width being used so as to prevent under-utilization of vector lanes. Tracking the first active ray also helps save SIMD intersection calls on all inactive rays at the beginning of the packet.
+</p>
+        
+         <center><img src="packet.png" style="width:50%;"></center>
+        
+        <p>However, there are costs associated with using packets as well. Divergence amongst BVH traversal and primitive intersections amongst individual rays in the packet leads to a performance drop for obvious reasons. For example, one ray can drag down an entire packet along with it into a node even if all other rays do not intersect with it. For this reason, it is important for rays belonging to one packet to be as coherent as possible. Then, the maximum benefits of packets are seen. As expected, packet-based traversal performs poorly on over-detailed scenes as primitives are too small for majority rays in a packet to intersect the same ones. </p>
+        <p>One thing to note is that each ray can be traced completely independently of another and thus ray-tracing is an inherently parallel algorithm. The starter code I used already exploits this fact by including the functionality to have multiple threads working on different ‘tiles’ of an image concurrently. I compare the performance of my packet-based ISPC version of a ray tracer to single ray based one at different thread counts, later, in the results section. </p>
+        
       
-<p>Here's a link to a rough darft of the final report. </p>
-<p><a href="https://docs.google.com/document/d/1Rd6lgAD_DPbqQZxKoifZzHbs1hyg2elY4btGhA6BE9k/edit?usp=sharing">Final Report Draft</a></p>        
+  
     
         
         <center><img src="banana.jpg" style="width:48%; float:left;"> <img src="banana.jpg" style="width:48%; margin-left:4%;"></center>
